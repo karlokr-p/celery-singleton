@@ -4,9 +4,8 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    # Only update poetry.lock. The minimum versions in pyproject.toml are the
-    # oldest tested ones and are raised by hand.
-    versioning-strategy: lockfile-only
+    # Raise the minimum versions in pyproject.toml, not only poetry.lock
+    versioning-strategy: increase
     groups:
       dependencies:
         patterns:
