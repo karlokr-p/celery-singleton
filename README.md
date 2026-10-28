@@ -1,5 +1,9 @@
 # Celery-Singleton
 
+[![PyPI](https://img.shields.io/pypi/v/celery-singleton-reboot?cacheSeconds=3600)](https://pypi.org/project/celery-singleton-reboot/)
+
+This is a fork of [celery-singleton](https://github.com/steinitzu/celery-singleton). As that package has gone unmaintained for some time, we maintain this fork to keep it working with current versions of Python and Celery. It is available on PyPI as [celery-singleton-reboot](https://pypi.org/project/celery-singleton-reboot/).
+
 Duplicate tasks clogging up your message broker? Do time based rate limits make you feel icky? Look no further!
 This is a baseclass for celery tasks that ensures only one instance of the task can be queued or running at any given time. Uses the task's name+arguments to determine uniqueness.
 
@@ -17,6 +21,7 @@ This is a baseclass for celery tasks that ensures only one instance of the task 
         - [raise\_on\_duplicate](#raiseonduplicate)
     - [App Configuration](#app-configuration)
     - [Testing](#testing)
+    - [Releasing](#releasing)
     - [Contribute](#contribute)
 
 <!-- markdown-toc end -->
@@ -33,7 +38,9 @@ So in gist:
 If you're already using a redis backend and a mostly default celery config, you're all set!
 
 ## Quick start
-`$ pip install celery-singleton`
+`$ pip install celery-singleton-reboot`
+
+The package is imported as `celery_singleton`, like the original package. If you are switching from `celery-singleton`, uninstall it first, because both packages install the same `celery_singleton` module.
 
 ```python
 import time
@@ -207,15 +214,19 @@ Note: if using old style celery config with uppercase variables and a namespace,
 
 ## Testing
 
-Tests are located in the `/tests` directory can be run with pytest
+Tests are located in the `/tests` directory and can be run with pytest. Install the dependencies from `poetry.lock` with [Poetry](https://python-poetry.org/) and run the tests:
 
 ```
-pip install -r dev-requirements.txt
-python -m pytest
+poetry install
+poetry run python -m pytest
 ```
 
 Some of the tests require a running redis server on `redis://localhost`
 To use a redis server on a different url/host, set the env variable `CELERY_SINGLETON_TEST_REDIS_URL`
+
+## Releasing
+
+Releases are published to PyPI by the `publish.yml` workflow when a release is created on GitHub. Before creating a release, set the new version in `pyproject.toml` and add a dated entry for it at the top of `CHANGELOG.md`. The release tag is the version, for example `0.4.0`.
 
 
 ## Contribute

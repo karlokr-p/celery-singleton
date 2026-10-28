@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.0] - Unreleased
+
+The first release of this fork, published to PyPI as `celery-singleton-reboot`. The import name is still `celery_singleton`.
+
 ### Added
 - Support passing an optional custom [`json.JSONEncoder`] to `util.generate_lock()` via `singleton_json_encoder_class`.
   Useful for task arguments with objects marshalable to the same string representation, e.g. passing [`uuid.UUID`] to  [`str()`].
@@ -12,6 +16,8 @@
 
 ### Changed
 - Require Python 3.10 or newer, which pytest 9.0.3 needs for its security fix.
+- Publish releases to PyPI with trusted publishing.
+- Build the package with `poetry-core` instead of the whole of Poetry.
 
 ## [0.3.1] - 2021-01-14
 
