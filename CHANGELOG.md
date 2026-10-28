@@ -10,6 +10,9 @@
 [`str()`]: https://docs.python.org/3/library/stdtypes.html#str
 [`uuid.UUID`]: https://docs.python.org/3/library/uuid.html#uuid.UUID
 
+### Changed
+- Require Python 3.10 or newer, which pytest 9.0.3 needs for its security fix.
+
 ## [0.3.1] - 2021-01-14
 
 ### Changed

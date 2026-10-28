@@ -8,7 +8,7 @@ repository = 'https://github.com/steinitzu/celery-singleton'
 license = "MIT"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.10"
 celery = ">=4"
 redis = "*"
 
