@@ -1,0 +1,88 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+permissions: {}
+
+jobs:
+  tests:
+    name: Python ${{ matrix.python }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ['3.10', '3.11', '3.12', '3.13', '3.14']
+    services:
+      redis:
+        image: redis:8-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      CELERY_SINGLETON_TEST_REDIS_URL: redis://localhost:6379
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      with:
+        persist-credentials: false
+    - name: Set up Python ${{ matrix.python }}
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+      with:
+        python-version: ${{ matrix.python }}
+    - name: Install Poetry
+      run: python -m pip install --upgrade pip poetry
+    - name: Install dependencies from poetry.lock
+      run: poetry install
+    - name: Run tests
+      run: poetry run python -m pytest
+
+  package:
+    name: Package
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      with:
+        persist-credentials: false
+    - name: Set up Python
+      uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: python -m pip install --upgrade pip build twine
+    - name: Build package
+      run: python -m build
+    - name: Check package
+      run: python -m twine check dist/*
+
+  all-checks:
+    # A single job to require in a branch ruleset
+    name: All checks
+    if: always()
+    needs: [tests, package]
+    runs-on: ubuntu-latest
+    permissions: {}
+
+    steps:
+    - name: Check that all jobs succeeded
+      env:
+        RESULTS: ${{ join(needs.*.result, ' ') }}
+      run: |
+        for result in $RESULTS; do
+          if [ "$result" != "success" ]; then
+            echo "::error::One or more jobs did not succeed: $RESULTS"
+            exit 1
+          fi
+        done
